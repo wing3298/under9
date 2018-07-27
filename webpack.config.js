@@ -26,7 +26,7 @@ const config = {
         }
     },
     mode: devBuild ? 'development' : 'production',
-    devtool: devBuild ? 'inline-source-map' : undefined,
+    devtool: devBuild ? 'source-map' : undefined,
     plugins: [
         new CleanWebpackPlugin(['dist']),
         new VueLoaderPlugin(),
@@ -64,7 +64,7 @@ const config = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
             },/*
             {
               test: /\.(png|jpg|gif)$/,
@@ -97,6 +97,49 @@ const config = {
             {
               test: /\.ico$/, 
               loader: 'file-loader?name=[name].[ext]'
+            },/*
+            {
+                loader: 'sass-resources-loader',
+                options: {
+                  resources: path.resolve(__dirname, '../src/style/_variables.scss')
+                }
+            }*/
+            {
+                test: /\.scss$/,
+                use: [
+                    'vue-style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            // CSS内のurl()メソッドの取り込みを禁止する
+                            url: false,
+                            // ソースマップの利用有無
+                            sourceMap: true,
+                            // 空白文字やコメントを削除する
+                            minimize: true,
+                            // Sass+PostCSSの場合は2を指定
+                            importLoaders: 2
+                          },              
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                          // PostCSS側でもソースマップを有効にする
+                          sourceMap: true,
+                          plugins: [
+                            // Autoprefixerを有効化
+                            // ベンダープレフィックスを自動付与する
+                            require('autoprefixer')({grid: true})
+                          ]
+                        },
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true,
+                        }              
+                    }
+                ]
             },
         ]
     }
