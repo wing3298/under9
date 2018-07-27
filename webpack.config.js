@@ -65,7 +65,7 @@ const config = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
-            },
+            },/*
             {
               test: /\.(png|jpg|gif)$/,
               use: [
@@ -78,12 +78,25 @@ const config = {
                   }
                 }
               ]
-            },
+            },*/
             {
               test: /\.(woff|woff2|eot|ttf|otf)$/,
               use: [
                 'file-loader'
               ]
+            },
+            {
+              test: /\.(jpe?g|png|gif|svg)$/i, 
+              loaders: 'file-loader',
+              options: {
+                name: '[name].[ext]',
+                context: '',
+                outputPath: 'assets/'
+              }
+            },
+            {
+              test: /\.ico$/, 
+              loader: 'file-loader?name=[name].[ext]'
             },
         ]
     }
