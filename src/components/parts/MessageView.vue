@@ -1,37 +1,239 @@
 <template>
-  <div class="message message-frame" id="msg-{{id}}" tabindex="-1">
-    <div class="indicator" style="position: absolute; left: 0px; top: 0px; width: 4px; height: 100%;">&nbsp;</div>
-    <div style="width: 100%;min-height: 40px; padding-left: 5px;">
-      <div style="float: left; margin-left:2px;margin-top: 4px;margin-right: 4px;" class="message-header"></div>
-      <div style="overflow:hidden; width:auto;padding-top:3px;padding-right: 3px;padding-left: 5px;">
-        <div id="message-indicator" style="height: 26px;">
-          <div style="float: left;" class="author">{{ user.name }}:</div>
-          <a class="threadIcon nodecoration d-none d-md-inline d-lg-inline d-xl-inline"><img class="grayscale icons" style="vertical-align: top;" src="/images/indexB3.png">Edit</a>
-          <a class="mute threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" src="/images/muted.png">Mute</a>
-          <a class="icon threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" src="/images/indexB1.png">Icon</a>
-          <a class="reply threadIcon nodecoration d-none d-md-inline d-lg-inline d-xl-inline" href=""><img class="grayscale icons" style="vertical-align: top;" src="/images/indexB.png">Reply</a>
-          <a  style="float: right;" class="time">{{ dateFormatted }}</a>
-          <span class="icon threadIcon thumbsImg mr-0"></span>
-        </div>
+  <div class="message message-frame" id="msg-" tabindex="-1">
+    <div class="indicator indicatorspace">&nbsp;</div>
+    <div class="message-basebody">
+      <div class="message-header">
+        <img class="online" :src="unknown" alt="unknown" title="unknown" style="height:44px">
+      </div>
+      <div class="message-body">
+        <MessageHeaderView></MessageHeaderView>
         <div class="message-formatted">
-          {| messageFormatted |}
+          <div class="msgrow">TEST<br>test</div>
         </div>
       </div>
-      <div style="clear: both;"></div>
     </div>
     <div class="replies replies-hidden">
     </div>
+    <div class="replyHandle"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-export default Vue.extend({
-  name: 'MessageView',
+import MessageHeaderView from './MessageHeaderView.vue';
+
+export default Vue.component('MessageView', {
+  template: '#MessageView',
   data() {
     return {
-      msg: '',
+      id: 'hoge',
+      unknown: require('../../assets/messages/unknown.jpg'),
     };
+  },
+  components: {
+    messageHeaderView: MessageHeaderView,
   },
 });
 </script>
+
+<style lang="scss">
+/* wave messages */
+.messages {
+  border-left: 1px solid #e6e6fa;
+  border-top: 1px solid #e6e6fa;
+  border-right: 1px solid #e6e6fa;
+  border-bottom: 1px solid #e6e6fa;
+  background: white;
+  margin-top: 3px;/* !check! */
+}
+
+.message-formatted {
+  font-size: 1em;/* or 1.1em */
+}
+
+.message-mute {
+  color: #dcdcdc;
+}
+
+.selected {
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  box-shadow: 0px 0px 0px 3px #acb975 inset;
+}
+.message .unread {
+  background-color: #acb976;
+}
+
+.message table {
+  border-collapse: collapse;
+  vertical-align: top;
+}
+
+.indicatorspace {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 4px;
+  height: 100%;
+}
+
+
+.replies{
+  position: relative;
+  margin-left: 1.8em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  box-shadow: -2px 2px 2px #ddd;
+  border:1px solid #D8D8D8;
+  border-radius:3px;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+}
+.replies:after,.replies:before{
+    border: solid transparent;
+    content:'';
+    height:0;
+    width:0;
+    pointer-events:none;
+    position:absolute;
+    bottom:100%;
+    left:4%;
+}
+.replies:after{
+    border-color: rgba(255, 255, 255, 0);
+    border-top-width:10px;
+    border-bottom-width:10px;
+    border-left-width:10px;
+    border-right-width:10px;
+    margin-left: -10px;
+    border-bottom-color:#FFFFFF;
+}
+.replies:before{
+    border-color: rgba(216, 216, 216, 0);
+    border-top-width:11px;
+    border-bottom-width:11px;
+    border-left-width:11px;
+    border-right-width:11px;
+    margin-left: -11px;
+    margin-bottom: 1px;
+    border-bottom-color:#D8D8D8;
+}
+
+
+
+.message-frame {
+    padding-top: 4px;
+    padding-bottom: 0px;
+    border-bottom: 1px dotted #A2A2A2;
+    position: relative;
+}
+
+.message-frame:first-child {
+    /* border-top: 1px solid #A2A2A2; */
+    border-bottom: 1px dotted #A2A2A2;
+    margin-top: -3px;
+    padding-bottom: 0px;
+}
+
+.message-frame:last-child {
+    padding-top: 3px;
+    padding-bottom: 0px;
+    /* border-bottom: 1px solid #A2A2A2; */
+}
+
+.message-frame:only-of-type {
+    margin-top: -3px;
+    padding-bottom: 0px;
+    border-bottom: 1px solid #EBEBEB;
+}
+
+.message-basebody {
+  width: 100%;
+  min-height: 40px;
+  padding-left: 5px;
+}
+
+.message-header {
+  float: left;
+  margin-left:2px;
+  margin-top: 4px;
+  margin-right: 4px;
+}
+
+.message-body {
+  overflow: hidden;
+  width: auto;
+  padding-top: 3px;
+  padding-right: 3px;
+  padding-left: 5px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+}
+.message-body * {
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -khtml-user-select: auto;
+  -ms-user-select: auto;
+}
+
+.thumbsImg {
+}
+
+.iconCount {
+  font-size: 7pt;
+  vertical-align: bottom;
+}
+
+
+.message-text {
+  line-height: 1.5em;
+  word-break: break-all;
+}
+
+.msgrow {
+  line-height: 1.4em;
+}
+
+
+.reply {
+}
+
+.replyParentTopPosition {
+  margin-left: 0px;
+}
+
+.time {
+  float: right;
+  color: #999;
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+.notification .time {
+  color: #aaa;
+  margin-right: 2.5em;
+}
+
+
+
+/* reply */
+.replies-hidden {
+  display: none;
+}
+
+
+
+.replyHandle {
+  height: 4px;
+  cursor: pointer;
+}
+.replyHandle:hover {
+  border-radius: 1px;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  box-shadow: 0px 0px 0px 1px #acb975 inset;
+}
+</style>

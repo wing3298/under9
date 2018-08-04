@@ -1,6 +1,8 @@
 <template>
   <a class="waveitem" href="#wave/">
-      <div class="wave-list-title">   <span class="badge badge-light badge-success piros float-right"><!-- { unreadPosts } --></span></div>
+      <div class="wave-list-title">
+        <span class="circular label bg-primary text-white float-right">2</span>
+      </div>
   </a>
 </template>
 

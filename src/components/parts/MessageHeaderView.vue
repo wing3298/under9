@@ -1,0 +1,94 @@
+<template>
+  <div id="message-innerbody">
+    <div class="author">Unlnown:</div>
+    <a class="threadIcon"><img class="grayscale icons" style="vertical-align: top;" :src="editd">Edit</a>
+    <a class="mute threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" :src="muted">Mute</a>
+    <a class="icon threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" :src="liked">Icon</a>
+    <a class="reply threadIcon nodecoration d-none d-md-inline d-lg-inline d-xl-inline" href=""><img class="grayscale icons" style="vertical-align: top;" :src="replyd">Reply</a>
+    <a  style="float: right;" class="time">YYYY/MM/DD</a>
+    <span class="icon threadIcon thumbsImg mr-0"></span>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.component('MessageHeaderView', {
+  data() {
+    return {
+      id: 'hoge',
+      editd: require('../../assets/messages/edit-d.png'),
+      muted: require('../../assets/messages/muted.png'),
+      liked: require('../../assets/messages/like-d.png'),
+      replyd: require('../../assets/messages/reply-d.png'),
+    };
+  },
+});
+</script>
+
+<style lang="scss">
+.message .unread {
+  background-color: #acb976;
+}
+
+
+#message-innerbody {
+  height: 26px;
+}
+
+.thumbsImg {
+}
+
+.iconCount {
+  font-size: 7pt;
+  vertical-align: bottom;
+}
+
+
+.message-text {
+  line-height: 1.5em;
+  word-break: break-all;
+}
+
+.msgrow {
+  line-height: 1.4em;
+}
+
+.author {
+  color: #9C9C9C;
+  font-size: 1em;
+  float: left;
+}
+
+.threadIcon {
+  float: right;
+  margin-right: 8px;
+  color: #9c9c9c;
+}
+
+.icons {
+  margin-right: 3px;
+}
+
+.grayscale {
+  -webkit-filter: grayscale(1%); 
+  filter: brightness(200%);
+}
+
+.nodecoration {
+  text-decoration: none!important;  
+}
+
+.time {
+  float: right;
+  color: #999;
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+.notification .time {
+  color: #aaa;
+  margin-right: 2.5em;
+}
+
+</style>
