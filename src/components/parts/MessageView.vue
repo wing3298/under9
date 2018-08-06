@@ -1,5 +1,5 @@
 <template>
-  <div class="message message-frame" id="msg-" tabindex="-1">
+  <div class="message message-frame" id="msg-" tabindex="-1" v-on:click.stop.privent="readMessage" v-bind:class="changeSelectred">
     <div class="indicator indicatorspace">&nbsp;</div>
     <div class="message-basebody">
       <div class="message-header">
@@ -8,13 +8,14 @@
       <div class="message-body">
         <MessageHeaderView></MessageHeaderView>
         <div class="message-formatted">
-          <div class="msgrow">TEST<br>test</div>
+          <div class="msgrow">TEST</div>
+          <div class="msgrow">test</div>
         </div>
       </div>
     </div>
     <div class="replies replies-hidden">
     </div>
-    <div class="replyHandle"></div>
+    <div class="replyHandle" v-on:click.stop.privent="addReply"></div>
   </div>
 </template>
 
@@ -28,15 +29,37 @@ export default Vue.component('MessageView', {
     return {
       id: 'hoge',
       unknown: require('../../assets/messages/unknown.jpg'),
+      isSelect: false,
     };
   },
   components: {
     messageHeaderView: MessageHeaderView,
   },
+  methods: {
+    readMessage(event) {
+      if (event) {
+        this.$emit('allUnselect', event.currentTarget);
+        this.isSelect = true;
+      }
+    },
+    addReply(event) {
+      if (event) {
+        // alert(event.currentTarget.id);
+      }
+    },
+    changeSelectred(state) {
+      this.isSelect = state;
+    },
+  },
 });
 </script>
 
 <style lang="scss">
+/* hide forcus rect */
+*:focus {
+  outline: none;
+}
+
 /* wave messages */
 .messages {
   border-left: 1px solid #e6e6fa;
@@ -49,6 +72,7 @@ export default Vue.component('MessageView', {
 
 .message-formatted {
   font-size: 1em;/* or 1.1em */
+  -ms-user-select: element;
 }
 
 .message-mute {
@@ -195,6 +219,7 @@ export default Vue.component('MessageView', {
 
 .msgrow {
   line-height: 1.4em;
+  user-select: text;
 }
 
 

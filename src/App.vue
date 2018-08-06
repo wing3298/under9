@@ -97,7 +97,6 @@ export default {
     waveFooter: WaveFooter,
     waveReplyFormView: WaveReplyFormView,
   },
-
 };
 </script>
 

@@ -1,10 +1,10 @@
 <template>
   <div id="message-innerbody">
     <div class="author">Unlnown:</div>
-    <a class="threadIcon"><img class="grayscale icons" style="vertical-align: top;" :src="editd">Edit</a>
-    <a class="mute threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" :src="muted">Mute</a>
-    <a class="icon threadIcon nodecoration" href=""><img class="grayscale icons" style="vertical-align: top;" :src="liked">Icon</a>
-    <a class="reply threadIcon nodecoration d-none d-md-inline d-lg-inline d-xl-inline" href=""><img class="grayscale icons" style="vertical-align: top;" :src="replyd">Reply</a>
+    <a class="threadIcon nodecoration"  href="#" v-on:click="msgHeaderClick('edit')"><img class="grayscale icons" style="vertical-align: top;" :src="editd">Edit</a>
+    <a class="mute threadIcon nodecoration" href="#" v-on:click="msgHeaderClick('mute')"><img class="grayscale icons" style="vertical-align: top;" :src="muted">Mute</a>
+    <a class="icon threadIcon nodecoration" href="#" v-on:click="msgHeaderClick('icon')"><img class="grayscale icons" style="vertical-align: top;" :src="liked">Icon</a>
+    <a class="reply threadIcon nodecoration" href="#" v-on:click="msgHeaderClick('reply')"><img class="grayscale icons" style="vertical-align: top;" :src="replyd">Reply</a>
     <a  style="float: right;" class="time">YYYY/MM/DD</a>
     <span class="icon threadIcon thumbsImg mr-0"></span>
   </div>
@@ -22,6 +22,27 @@ export default Vue.component('MessageHeaderView', {
       liked: require('../../assets/messages/like-d.png'),
       replyd: require('../../assets/messages/reply-d.png'),
     };
+  },
+  methods: {
+    msgHeaderClick(eventType) {
+      switch (eventType) {
+        case 'edit':
+          //
+          break;
+        case 'mute':
+          //
+          break;
+        case 'icon':
+          //
+          break;
+        case 'reply':
+          //
+          break;
+        default:
+          break;
+      }
+      return false;
+    },
   },
 });
 </script>
