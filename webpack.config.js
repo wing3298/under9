@@ -36,6 +36,7 @@ const config = {
             hash: true
         }),
         new webpack.ProvidePlugin({
+            $: 'nanojs',
         }),
     ],
     module: {

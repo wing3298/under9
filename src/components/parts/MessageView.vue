@@ -14,6 +14,7 @@
       </div>
     </div>
     <div class="replies replies-hidden">
+      <h1 v-if="this.addReplyFrame">Yes</h1>
     </div>
     <div class="replyHandle" v-on:click.stop="addReply"></div>
   </div>
@@ -33,6 +34,7 @@ export default Vue.component('MessageView', {
       isSelect: false,
       fixMessageClass: 'message',
       fixMessageFrameClass: 'message-frame',
+      addReplyFrame: false,
     };
   },
   components: {
@@ -47,7 +49,7 @@ export default Vue.component('MessageView', {
     },
     addReply(event) {
       if (event) {
-        // alert(event.currentTarget.id);
+        this.addReplyFrame = true;
       }
     },
   },

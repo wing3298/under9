@@ -5,6 +5,10 @@
           <div class="notification getprevmessages"></div>
           <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
           <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
         </div>
     </div>
   </div>
