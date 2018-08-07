@@ -3,21 +3,22 @@ import Vue from 'vue';
 Vue.use(Vuex);
 
 const state = {
-    allunread: '',
+    selectedMessageId: false,
 };
 const actions = {
-    allunread(context) {
-        let unreadstate = context.state.allunread;
-        if (unreadstate === 'selected') {
-            unreadstate = '';
-        }
-        context.commit('updateUnreadState', unreadstate);
+    saveTargetId(context) {
+        const selectId = context.state.selectedMessageId;
+        context.commit('updateSelectId', selectId);
     },
 };
-const getters = {};
+const getters = {
+    getSelectedId() {
+        return state.selectedMessageId;
+    },
+};
 const mutations = {
-    updateUnreadState(unreadState) {
-        state.allunread = unreadState;
+    updateSelectId(selectId) {
+        state.selectedMessageId = selectId;
     },
 };
 

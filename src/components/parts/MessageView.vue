@@ -1,5 +1,5 @@
 <template>
-  <div class="message message-frame" id="msg-" tabindex="-1" v-on:click.stop.privent="readMessage" v-bind:class="changeSelectred">
+  <div :id="this.id" tabindex="-1" v-on:click.stop="readMessage" :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
     <div class="indicator indicatorspace">&nbsp;</div>
     <div class="message-basebody">
       <div class="message-header">
@@ -15,21 +15,24 @@
     </div>
     <div class="replies replies-hidden">
     </div>
-    <div class="replyHandle" v-on:click.stop.privent="addReply"></div>
+    <div class="replyHandle" v-on:click.stop="addReply"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Vuex from 'vuex';
 import MessageHeaderView from './MessageHeaderView.vue';
 
 export default Vue.component('MessageView', {
   template: '#MessageView',
   data() {
     return {
-      id: 'hoge',
+      id: Math.random().toString(36).slice(-8),
       unknown: require('../../assets/messages/unknown.jpg'),
       isSelect: false,
+      fixMessageClass: 'message',
+      fixMessageFrameClass: 'message-frame',
     };
   },
   components: {
@@ -38,8 +41,8 @@ export default Vue.component('MessageView', {
   methods: {
     readMessage(event) {
       if (event) {
-        this.$emit('allUnselect', event.currentTarget);
-        this.isSelect = true;
+        // call to parent method -> other all unselect
+        this.$emit('saveTargetId', event.currentTarget.id);
       }
     },
     addReply(event) {
@@ -47,9 +50,17 @@ export default Vue.component('MessageView', {
         // alert(event.currentTarget.id);
       }
     },
-    changeSelectred(state) {
-      this.isSelect = state;
+  },
+  computed: {
+    unselectMessage(): object {
+      return {
+        // 選択されたメッセージIDが自分以外の時は選択を消す
+        selected: (this.messageId !== '' && this.messageId === this.id),
+      };
     },
+  },
+  props: {
+      messageId: String,
   },
 });
 </script>
@@ -72,7 +83,6 @@ export default Vue.component('MessageView', {
 
 .message-formatted {
   font-size: 1em;/* or 1.1em */
-  -ms-user-select: element;
 }
 
 .message-mute {

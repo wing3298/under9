@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router';
 import Quasar, * as All from 'quasar-framework/dist/quasar.mat.esm.js';
 import 'quasar-extras/material-icons';
-import store from './vuex/state';
+import stateStore from './vuex/state';
 
 Vue.config.productionTip = false;
 
@@ -20,9 +20,9 @@ Vue.use(Quasar, {
 
 // #app to index.html>div>id='app'
 new Vue({
-  store,
   el: '#app',
   router,
   components: { App },
   template: '<App/>',
+  store: stateStore,
 });

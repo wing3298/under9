@@ -3,8 +3,8 @@
     <div class="waves-container">
         <div class="messages">
           <div class="notification getprevmessages"></div>
-          <MessageView v-on:allUnselect="allUnselect"></MessageView>
-          <MessageView v-on:allUnselect="allUnselect"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
         </div>
     </div>
   </div>
@@ -22,14 +22,27 @@ export default Vue.component('WaveView', {
   },
   data() {
     return {
+      selectTargetID: '',
     };
   },
   methods: {
     // call by children
-    allUnselect(target) {
+    saveTargetId(targetId) {
       // all children
-      this.$store.dispatch('allunread');
+      this.$store.dispatch('saveTargetId');
+      this.selectTargetID = targetId;
     },
   },
 });
+
+
+const EventBus = new Vue();
+Object.defineProperties(Vue.prototype, {
+    $bus: {
+        get() {
+            return EventBus;
+        },
+    },
+});
+
 </script>
