@@ -27,5 +27,7 @@ export default Vue.component('MessageReplyFormView', {
     return {
     };
   },
+  methods: {
+  },
 });
 </script>

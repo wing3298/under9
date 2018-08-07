@@ -36,6 +36,10 @@ export default Vue.component('WaveView', {
       this.$store.dispatch('saveTargetId');
       this.selectTargetID = targetId;
     },
+    // add sibling children
+    replySiblingMessage(targetId) {
+
+    },
   },
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <div :id="this.id" tabindex="-1" v-on:click.stop="readMessage" :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
+  <div :id="this.id" tabindex="-1" v-on:click.stop="readMessage" v-on:keyup.enter="addChildMessage" v-on:keyup.shift.enter="addSameMessage" :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
     <div class="indicator indicatorspace">&nbsp;</div>
     <div class="message-basebody">
       <div class="message-header">
@@ -13,8 +13,15 @@
         </div>
       </div>
     </div>
-    <div class="replies replies-hidden">
-      <h1 v-if="this.addReplyFrame">Yes</h1>
+    <div :class="[fixReplies, isReplies]" v-if="this.addReplyFrame">
+      <!-- reply new Messages(Input possible) -->
+      <MessageReplyFormView v-on:blur="newMessageForcusOut"></MessageReplyFormView>
+    </div>
+    <div :class="[fixReplies, isReplies]" v-else-if="this.replyItems.length > 0">
+      <!-- Child of same level -->
+      <MessageView v-for="item in replyItems" :key="item.id"></MessageView>
+      <!-- Shift + Enter Messages　Child of same level -->
+      <MessageReplyFormView v-if="this.haveChild" v-on:blur="newMessageForcusOut"></MessageReplyFormView>
     </div>
     <div class="replyHandle" v-on:click.stop="addReply"></div>
   </div>
@@ -22,8 +29,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex,{ CommitOptions } from 'vuex';
 import MessageHeaderView from './MessageHeaderView.vue';
+import MessageReplyFormView from './MessageReplyFormView.vue';
 
 export default Vue.component('MessageView', {
   template: '#MessageView',
@@ -35,22 +43,48 @@ export default Vue.component('MessageView', {
       fixMessageClass: 'message',
       fixMessageFrameClass: 'message-frame',
       addReplyFrame: false,
+      fixReplies: 'replies',
+      // same level items
+      replyItems: [] as Array<Object>,
+      // have a child
+      haveChild: false,
     };
   },
   components: {
     messageHeaderView: MessageHeaderView,
+    messageReplyFormView: MessageReplyFormView,
   },
   methods: {
+    // mouse click
     readMessage(event) {
       if (event) {
         // call to parent method -> other all unselect
         this.$emit('saveTargetId', event.currentTarget.id);
       }
     },
+    // reply frame click(At this point is uncertain)
     addReply(event) {
       if (event) {
         this.addReplyFrame = true;
       }
+    },
+    // Enter key event and ...
+    addChildMessage(event) {
+      if (event) {
+        // Enter key -> add reply frame(child)
+        this.addReply(event);
+      }
+    },
+    // Shift + Enter key event and ...
+    addSameMessage(event) {
+      if (event) {
+        this.haveChild = true;
+        // call to parent method -> add same(sibling) child
+        this.$emit('replySiblingMessage', this.$parent.$el.id);
+      }
+    },
+    newMessageForcusOut(event) {
+      event.currentTarget.id;
     },
   },
   computed: {
@@ -58,6 +92,11 @@ export default Vue.component('MessageView', {
       return {
         // 選択されたメッセージIDが自分以外の時は選択を消す
         selected: (this.messageId !== '' && this.messageId === this.id),
+      };
+    },
+    isReplies(): object {
+      return {
+        repliesHidden: !this.addReplyFrame,
       };
     },
   },
@@ -257,13 +296,13 @@ export default Vue.component('MessageView', {
 
 
 /* reply */
-.replies-hidden {
+.repliesHidden {
   display: none;
 }
 
 
 
-.replyHandle {
+.replyHandle :last-child {
   height: 4px;
   cursor: pointer;
 }
