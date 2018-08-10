@@ -1,5 +1,5 @@
 <template>
-  <div :id="this.id" tabindex="-1" v-on:click.stop="readMessage" v-on:keyup.enter="addChildMessage" v-on:keyup.shift.enter="addSameMessage" :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
+  <div :id="this.id" tabindex="-1" @click.stop="readMessage" @keyup.stop.prevent.shift.enter="addSameMessage" @keyup.enter.stop.prevent="addChildMessage" @focus="focusIn" @blur="focusOut" :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
     <div class="indicator indicatorspace">&nbsp;</div>
     <div class="message-basebody">
       <div class="message-header">
@@ -13,53 +13,51 @@
         </div>
       </div>
     </div>
-    <div :class="[fixReplies, isReplies]" v-if="this.addReplyFrame">
-      <!-- reply new Messages(Input possible) -->
-      <MessageReplyFormView v-on:blur="newMessageForcusOut"></MessageReplyFormView>
-    </div>
-    <div :class="[fixReplies, isReplies]" v-else-if="this.replyItems.length > 0">
+    <div :class="[fixRepliesClass, isReplies]">
       <!-- Child of same level -->
-      <MessageView v-for="item in replyItems" :key="item.id"></MessageView>
-      <!-- Shift + Enter Messages　Child of same level -->
-      <MessageReplyFormView v-if="this.haveChild" v-on:blur="newMessageForcusOut"></MessageReplyFormView>
+      <MessageView v-if="replyItems.length > 0" v-for="item in replyItems" :key="item.id" @replySiblingMessage="addSameReplyMessage"></MessageView>
+      <!-- Enter or Shift + Enter Messages　Child of same level -->
+      <MessageReplyFormView v-if="addReplyFrame" @commitMessage="commitReply" @hideReplyFrom="hideReplyFrom"></MessageReplyFormView>
     </div>
-    <div class="replyHandle" v-on:click.stop="addReply"></div>
+    <div class="replyHandle" @click.stop="addReply"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Vuex,{ CommitOptions } from 'vuex';
+import Vuex, { CommitOptions } from 'vuex';
 import MessageHeaderView from './MessageHeaderView.vue';
 import MessageReplyFormView from './MessageReplyFormView.vue';
+import EventBus from '../../libs/EventBus.ts';
 
 export default Vue.component('MessageView', {
   template: '#MessageView',
   data() {
     return {
       id: Math.random().toString(36).slice(-8),
+      activeChildMessageId: '',
       unknown: require('../../assets/messages/unknown.jpg'),
-      isSelect: false,
       fixMessageClass: 'message',
       fixMessageFrameClass: 'message-frame',
+      fixRepliesClass: 'replies',
       addReplyFrame: false,
-      fixReplies: 'replies',
-      // same level items
-      replyItems: [] as Array<Object>,
-      // have a child
-      haveChild: false,
+      replyItems: [] as object[],
     };
   },
   components: {
     messageHeaderView: MessageHeaderView,
     messageReplyFormView: MessageReplyFormView,
   },
+  created() {
+    // const initdata = { msgId: '', message: '', auther: '', icons: {}, mute: false, date: ''};
+    // this.replyItems.push(initdata);
+  },
   methods: {
     // mouse click
     readMessage(event) {
       if (event) {
-        // call to parent method -> other all unselect
-        this.$emit('saveTargetId', event.currentTarget.id);
+        // call to state -> other all unselect
+        this.$store.dispatch('saveTargetId', {id: event.currentTarget.id});
       }
     },
     // reply frame click(At this point is uncertain)
@@ -70,34 +68,61 @@ export default Vue.component('MessageView', {
     },
     // Enter key event and ...
     addChildMessage(event) {
-      if (event) {
+      // shiftキーも拾ってしまうのでこのメソッドでは排除(子から呼ばれたとき)
+      if (!event.shiftKey) {
         // Enter key -> add reply frame(child)
         this.addReply(event);
       }
     },
-    // Shift + Enter key event and ...
+    // Shift + Enter key event
     addSameMessage(event) {
       if (event) {
-        this.haveChild = true;
         // call to parent method -> add same(sibling) child
-        this.$emit('replySiblingMessage', this.$parent.$el.id);
+        this.$emit('replySiblingMessage', this.id);
       }
     },
-    newMessageForcusOut(event) {
-      event.currentTarget.id;
+    // 子コンポーネントから呼び出し
+    addSameReplyMessage(targetId) {
+      this.addReply({});
+    },
+    // from child event 入力フォームを消す
+    hideReplyFrom(event, targetId) {
+      this.addReplyFrame = false;
+      // 自分にフォーカスする
+      this.$el.focus();
+    },
+    // from child event 入力フォームからShift + Enterで確定
+    commitReply(event, targetId, inputText) {
+      // 入力フォームを消す
+      this.addReplyFrame = false;
+      // データを追加
+      this.replyItems.push({ targetId : inputText });
+    },
+    focusIn(event) {
+      console.log('focusIn');
+      this.activeChildMessageId = event.currentTarget.id;
+    },
+    focusOut(event) {
+      this.activeChildMessageId = '';
     },
   },
   computed: {
     unselectMessage(): object {
       return {
         // 選択されたメッセージIDが自分以外の時は選択を消す
-        selected: (this.messageId !== '' && this.messageId === this.id),
+        selected: (this.currentMessageId !== '' && this.currentMessageId === this.id),
       };
     },
     isReplies(): object {
       return {
-        repliesHidden: !this.addReplyFrame,
+        repliesHidden: !this.addReplyFrame && this.replyItems.length === 0,
       };
+    },
+    hasReplyFrame(): boolean {
+      return this.addReplyFrame;
+    },
+    currentMessageId(): string {
+      return this.$store.getters.getSelectedId;
     },
   },
   props: {

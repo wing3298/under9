@@ -25,4 +25,9 @@ new Vue({
   components: { App },
   template: '<App/>',
   store: stateStore,
+  computed: {
+    currentMessageId(): string {
+      return this.$store.getters.getSelectedId;
+    },
+  },
 });

@@ -1,14 +1,9 @@
 <template>
   <div class="wave">
     <div class="waves-container">
-        <div class="messages">
+        <div class="messages" @keyup.up.stop="prevMessage" @keyup.down.stop="nextMessage">
           <div class="notification getprevmessages"></div>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
-          <MessageView v-on:saveTargetId="saveTargetId" :message-id="selectTargetID"></MessageView>
+          <MessageView :message-id="selectTargetID" v-for="item in replyItems" :key="item.id" ></MessageView>
         </div>
     </div>
   </div>
@@ -17,6 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import MessageView from './MessageView.vue';
+import EventBus from '../../libs/EventBus.ts';
 
 export default Vue.component('WaveView', {
   name: 'WaveView',
@@ -24,33 +20,41 @@ export default Vue.component('WaveView', {
   components: {
     messageView: MessageView,
   },
+  created() {
+    EventBus.$on('changeFocus', this.changeFocus);
+  },
   data() {
     return {
       selectTargetID: '',
+      replyItems: [
+        {
+          id: 'hoge',
+          val: 'ok',
+        },
+        {
+          id: 'fuga',
+          val: 'okok',
+        },
+      ],
     };
   },
   methods: {
-    // call by children
-    saveTargetId(targetId) {
-      // all children
-      this.$store.dispatch('saveTargetId');
-      this.selectTargetID = targetId;
+    changeFocus(targetId, prevOrNext) {
+      switch (prevOrNext) {
+        case 'prev':
+          break;
+        case 'next':
+          break;
+        default:
+        
+      }
     },
-    // add sibling children
-    replySiblingMessage(targetId) {
-
+    prevMessage() {
+      console.log('prev');
+    },
+    nextMessage() {
+      console.log('next');
     },
   },
 });
-
-
-const EventBus = new Vue();
-Object.defineProperties(Vue.prototype, {
-    $bus: {
-        get() {
-            return EventBus;
-        },
-    },
-});
-
 </script>
