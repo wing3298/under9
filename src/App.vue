@@ -2,7 +2,7 @@
     <!-- main wrapping component -->
     <q-layout>
         <!-- optional -->
-        <q-layout-header reveal="false">
+        <q-layout-header reveal="reveal">
             <!-- content; any -->
             <q-toolbar color="primary">
               <!--
@@ -67,7 +67,7 @@
         </q-page-container>
 
         <!-- optional -->
-        <q-layout-footer reveal="false">
+        <q-layout-footer reveal="reveal">
             <!-- content; any -->
             <WaveMenu></WaveMenu>
         </q-layout-footer>
@@ -88,6 +88,7 @@ export default {
       logoimg: './assets/logo.png',
       leftSide: true,
       header: true,
+      reveal: false,
     };
   },
   components: {
