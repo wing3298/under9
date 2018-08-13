@@ -1,9 +1,9 @@
 <template>
   <div class="wave">
     <div class="waves-container">
-        <div class="messages" @keyup.up.stop="prevMessage" @keyup.down.stop="nextMessage">
-          <div class="notification getprevmessages"></div>
-          <MessageView :message-id="selectTargetID" v-for="item in replyItems" :key="item.id" ></MessageView>
+        <div class="messages">
+          <div id="messageHead" class="notification getprevmessages"></div>
+          <MessageView :message-id="selectTargetID" v-for="itm in messageItems" :message-items="messageItems"></MessageView>
         </div>
     </div>
   </div>
@@ -26,14 +26,85 @@ export default Vue.component('WaveView', {
   data() {
     return {
       selectTargetID: '',
-      replyItems: [
+      messageItems: [
         {
-          id: 'hoge',
-          val: 'ok',
+          msgId: 'msg001',
+          message: 'hoge<br>yahoooooo',
+          auther: '',
+          icons: {},
+          mute: false,
+          date: { created: '', modified: ''},
+          rootGroup: '1',
+          parentId: '',
+          parentIndex: 1,
+          haveChild: true,
+          replyItems: [
+            {
+              msgId: 'msg002',
+              message: 'fuga',
+              auther: '',
+              icons: {},
+              mute: false,
+              date: { created: '', modified: ''},
+              rootGroup: '1',
+              parentId: 'msg001',
+              parentIndex: 1,
+              haveChild: false,
+              replyItems: [],
+            },
+            {
+              msgId: 'msg004',
+              message: 'fuga2',
+              auther: '',
+              icons: {},
+              mute: false,
+              date: { created: '', modified: ''},
+              rootGroup: '1',
+              parentId: 'msg001',
+              parentIndex: 1,
+              haveChild: true,
+              replyItems: [
+                {
+                  msgId: 'msg006',
+                  message: 'fuga3',
+                  auther: '',
+                  icons: {},
+                  mute: false,
+                  date: { created: '', modified: ''},
+                  rootGroup: '1',
+                  parentId: 'msg001',
+                  parentIndex: 1,
+                  haveChild: false,
+                  replyItems: [],
+                },
+              ],
+            },
+            {
+              msgId: 'msg005',
+              message: 'fuga3',
+              auther: '',
+              icons: {},
+              mute: false,
+              date: { created: '', modified: ''},
+              rootGroup: '1',
+              parentId: 'msg001',
+              parentIndex: 1,
+              haveChild: false,
+              replyItems: [],
+            },
+          ],
         },
         {
-          id: 'fuga',
-          val: 'okok',
+          msgId: 'msg003',
+          message: 'hoo',
+          auther: '',
+          icons: {},
+          mute: false,
+          date: { created: '', modified: ''},
+          rootGroup: '2',
+          parentId: '',
+          parentIndex: -1,
+          haveChild: false,
         },
       ],
     };
@@ -48,12 +119,6 @@ export default Vue.component('WaveView', {
         default:
         
       }
-    },
-    prevMessage() {
-      console.log('prev');
-    },
-    nextMessage() {
-      console.log('next');
     },
   },
 });
