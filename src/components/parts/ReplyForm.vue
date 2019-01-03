@@ -15,7 +15,7 @@
 import Vue from 'vue';
 import Vuex, { CommitOptions } from 'vuex';
 import MessageReplyFormView from './MessageReplyFormView.vue';
-import EventBus from '../../libs/EventBus.ts';
+import EventBus from '../../libs/EventBus';
 
 export default Vue.component('ReplyForm', {
   template: '#ReplyForm',
@@ -230,8 +230,8 @@ export default Vue.component('ReplyForm', {
   -ms-user-select: auto;
 }
 
-.thumbsImg {
-}
+//.thumbsImg {
+//}
 
 .iconCount {
   font-size: 7pt;
@@ -250,8 +250,8 @@ export default Vue.component('ReplyForm', {
 }
 
 
-.reply {
-}
+//.reply {
+//}
 
 .replyParentTopPosition {
   margin-left: 0px;

@@ -44,7 +44,7 @@ import Vuex, { CommitOptions } from 'vuex';
 import MessageHeaderView from './MessageHeaderView.vue';
 import MessageReplyFormView from './MessageReplyFormView.vue';
 import ReplyForm from './ReplyForm.vue';
-import EventBus from '../../libs/EventBus.ts';
+import EventBus from '../../libs/EventBus';
 
 export default Vue.component('MessageView', {
   template: '#MessageView',
