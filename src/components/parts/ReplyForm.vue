@@ -1,5 +1,5 @@
 <template>
-    <div :class="[fixRepliesClass, isReplies]">
+    <div :class="[fixRepliesClass, isReplies]" ref="replyForm">
       <!-- Child of same level -->
       <MessageView v-if="replyItems.length > 0" v-for="item in replyItems" :key="item.id"
         @replySiblingMessage="addSameReplyMessage"
@@ -42,7 +42,7 @@ export default Vue.component('ReplyForm', {
     hideReplyFrom(event, targetId) {
       this.addReplyFrame = false;
       // 自分にフォーカスする
-      this.$el.focus();
+      (this.$refs.replyForm as HTMLElement).focus();
     },
     // from child event 入力フォームからShift + Enterで確定
     commitReply(event, targetId, inputText) {

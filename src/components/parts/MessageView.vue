@@ -1,5 +1,7 @@
 <template>
-  <div :id="this.id" tabindex="-1"
+  <div :id="this.id"
+    tabindex="-1"
+    ref="messageView"
     @click.stop="readMessage"
     @keyup.stop.prevent.shift.enter="addSameMessage"
     @keyup.enter.stop.prevent="addChildMessage"
@@ -107,7 +109,7 @@ export default Vue.component('MessageView', {
     hideReplyFrom(event, targetId) {
       this.addReplyFrame = false;
       // 自分にフォーカスする
-      this.$el.focus();
+      (this.$refs.messageView as HTMLElement).focus();
     },
     // from child event 入力フォームからShift + Enterで確定
     commitReply(event, targetId, inputText) {
