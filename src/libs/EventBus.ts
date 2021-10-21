@@ -1,5 +1,7 @@
-import Vue from 'vue';
+import { createApp } from 'vue'
 
-const EventBus = new Vue();
+const app = createApp(createApp)
+
+const EventBus = app;
 
 export default EventBus;

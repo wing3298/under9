@@ -20,17 +20,20 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.component('WaveReplyFormView', {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'WaveReplyFormView',
   data() {
     return {
-      unknown: require('../../assets/messages/unknown.jpg'),
+      unknown: require('./../../assets/messages/unknown.jpg'),
     };
   },
 });
 </script>
 
 <style lang="scss">
+
 .replyform {
     border-top: 1px solid #EBEBEB;
     border-right: 1px solid #EBEBEB;
@@ -41,7 +44,6 @@ export default Vue.component('WaveReplyFormView', {
     border-image: none;
     background-color: #eee;
 }
-
 
 .replyTextArea {
   outline: 0;

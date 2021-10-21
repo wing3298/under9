@@ -4,17 +4,17 @@
     <input type="text" placeholder="email" v-model.trim="username">
     <input type="password" placeholder="Password" v-model.trim="password">
     <button @click="signUp">Register</button>
-    <p>Do you have an account? 
+    <p>Do you have an account?
       <router-link to="/signin">sign in now!!</router-link>
     </p>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import firebase from 'firebase';
+import { defineComponent } from 'vue';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'Signup',
   data() {
     return {
@@ -24,7 +24,8 @@ export default Vue.extend({
   },
   methods: {
     signUp() {
-      firebase.auth().createUserWithEmailAndPassword(this.username, this.password)
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, this.username, this.password)
         .then(user => {
           alert('Create account: ' + user);
         })
@@ -38,7 +39,7 @@ export default Vue.extend({
 
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
 h1, h2 {
   font-weight: normal;
 }

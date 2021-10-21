@@ -1,35 +1,35 @@
-import Vue from 'vue';
-import Router, { RouteConfig } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import AppMain from '../App.vue';
 import SignUp from '../components/SignUp.vue';
 import SignIn from '../components/SignIn.vue';
-import firebase from 'firebase';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-Vue.use(Router);
+ const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/:catchAll(.*)',
+    redirect: 'signin',
+  },
+  {
+    path: '/',
+    name: 'AppMain',
+    component: AppMain,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp,
+  },
+  {
+    path: '/signin',
+    name: 'signin',
+    component: SignIn,
+  },
+ ];
 
-const router = new Router({
-  routes: [
-    {
-      path: '*',
-      redirect: 'signin',
-    }as RouteConfig,
-    {
-      path: '/',
-      name: 'AppMain',
-      component: AppMain,
-      meta: { requiresAuth: true },
-    }as RouteConfig,
-    {
-      path: '/signup',
-      name: 'signup',
-      component: SignUp,
-    }as RouteConfig,
-    {
-      path: '/signin',
-      name: 'signin',
-      component: SignIn,
-    }as RouteConfig,
-  ],
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes
 });
 
 router.beforeEach((to, from, next) => {
@@ -37,7 +37,9 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth) {
     // このルートはログインされているかどうか認証が必要です。
     // もしされていないならば、ログインページにリダイレクトします。
-    firebase.auth().onAuthStateChanged((user) => {
+
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         next();
       } else {
@@ -47,6 +49,7 @@ router.beforeEach((to, from, next) => {
         });
       }
     });
+
   } else {
     next(); // next() を常に呼び出すようにしてください!
   }

@@ -1,38 +1,23 @@
 <template>
-  <div :id="id" class="notification" tabindex="-1" v-on:keyup.esc.stop="escape" v-on:blur.stop="escape" >
-    <div style="width: 100%;min-height: 40px; padding-left: 5px;">
-      <div class="message-header"></div>
-      <div style="overflow:hidden; width:auto;padding-top:3px;padding-right: 3px;padding-left: 5px;">
-        <div style="height: 20px;">
-          <div style="float: left;" class="author">unknown:</div>
-          <a style="float: right;" class="time">YYYY/MM/DD</a>
-        </div>
-        <div class="message-formatted">
-            <form class="add-message" method="post" style="margin-top: 0px; margin-left: 0px;">
-                <textarea name="message" class="replyTextArea" v-model="inputText" v-on:keyup.shift.enter.stop="commitMessage" v-on:input="onInput" ref="textarea"></textarea>
-                <input type="submit" class="button sendmsg" style="right: 10px; position: absolute; float: right; bottom: 10px;" value="Done(Shift+Enter)" :disabled="processing" @click.prevent="submit"/>
-            </form>
-        </div>
-      </div>
-      <div style="clear: both;"></div>
-    </div>
-  </div>
+  <form class="add-message" method="post" style="margin-top: 0px; margin-left: 0px;">
+      <textarea name="message" class="replyTextArea" v-model="inputText" v-on:keyup.shift.enter.stop="commitMessage" v-on:input="onInput" ref="textarea" @keyup.enter.stop.prevent.exact="()=>{return false;}"></textarea>
+      <input type="submit" class="button sendmsg" style="right: 10px; position: absolute; float: right; bottom: 10px;" value="Done(Shift+Enter)" :disabled="processing" @click.prevent="submit"/>
+  </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, SetupContext, toRefs, watch, reactive, watchEffect, ref } from 'vue';
-//import { onMounted, onUpdated, onUnmounted } from "@vue/composition-api";
+import { defineComponent } from 'vue';
+import Vuex, { CommitOptions } from 'vuex';
 
 export default defineComponent({
-  name: 'MessageReplyFormView',
-  template: '#MessageReplyFormView',
-  emits: ['hideReplyFrom'],
+  name: 'MessageEditRow',
+  template: '#MessageRow',
+  props: ['post'],
   setup(props, context) {
     const id: string = Math.random().toString(36).slice(-8);
     const inputText = '';
     const processing = false;
     const unknown: any = require('./../../assets/messages/unknown.jpg');
-
 
     const replySelect = (event) => {
       if (event) {
@@ -78,7 +63,7 @@ export default defineComponent({
       });
     };
 //    onMounted(() => {
-      //const txtArea = this.$refs.textarea as HTMLInputElement;
+      //const txtArea = context.$refs.textarea as HTMLInputElement;
       //txtArea.focus();
 //    });
 
@@ -96,7 +81,6 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss">

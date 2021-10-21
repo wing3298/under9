@@ -1,25 +1,28 @@
-import Vuex from 'vuex';
-import Vue from 'vue';
+import { createStore } from 'vuex'
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export const store = createStore({
   state: {
-    selectedMessageId: {id: ''},
+    selectedMessageId: '',
   },
   getters: {
-    getSelectedId(state): string {
-        return state.selectedMessageId.id;
+    //call coumputed(()=>store.getters.getSelectedId)
+    getSelectedId(state: any): string {
+        return state.selectedMessageId;
     },
   },
+  //アクションは、状態を変更するのではなく、ミューテーションをコミットします
+  //アクションは store.dispatch がトリガーとなって実行されます
   actions: {
-    saveTargetId({commit, state}, targetId) {
+    //call store.dispatch("saveTargetId")
+    saveTargetId({ commit }, targetId: string) {
         commit('updateSelectId', targetId);
     },
   },
+  //ミューテーションハンドラを起動するためにはミューテーションのタイプを指定して store.commit を呼び出す必要があります
   mutations: {
-    updateSelectId(state, targetId) {
-        state.selectedMessageId = targetId;
+    //call store.commit("updateSelectId")
+    updateSelectId(state: any, targetId: string) {
+      state.selectedMessageId = targetId;
     },
   },
 });

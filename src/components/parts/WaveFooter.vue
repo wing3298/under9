@@ -1,10 +1,15 @@
 <template>
-    <span>wing-net.co.uk © 2018</span>
+    <span>wing-net.co.uk © 2021</span>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.component('WaveFooter', {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'WaveFooter',
   template: '#WaveFooter',
+  setup(){
+    return{};
+  }
 });
 </script>

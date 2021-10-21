@@ -14,8 +14,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.component('WaveSettings', {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'WaveSettings',
   template: '#WaveSettings',
 });
 </script>

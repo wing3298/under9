@@ -1,44 +1,51 @@
-import Vue from 'vue';
+import { createApp } from "vue";
+import App from "./App.vue";
 import router from './router';
-import RouterSwitcher from './Base.vue';
-import Quasar, * as All from 'quasar-framework/dist/quasar.mat.esm.js';
-import 'quasar-extras/material-icons';
-import stateStore from './vuex/state';
-import firebase from 'firebase';
+//import RouterSwitcher from './Base.vue';
+import {  } from 'vuex'
+import { store } from './vuex/state'
 
-Vue.config.productionTip = false;
+import { initializeApp } from 'firebase/app';
+import { Quasar } from 'quasar'
+import quasarUserOptions from './quasar-user-options'
+//Vue.config.productionTip = false;
 
 declare var require: any;
-// tslint:disable-next-line:no-var-requires
-require('quasar-framework/dist/umd/quasar.mat.min.css');
-// tslint:disable-next-line:no-var-requires
-require('quasar-extras/roboto-font');
+
 
 
 const config = {
     apiKey: 'AIzaSyDr67D71gKv64_5XJX20VKRFkzpphoN2jw',
-    authDomain: 'na-meeting.firebaseapp.com',
-    databaseURL: 'https://na-meeting.firebaseio.com',
-    projectId: 'na-meeting',
-    storageBucket: 'na-meeting.appspot.com',
+    authDomain: 'uneri.firebaseapp.com',
+    databaseURL: 'https://uneri.firebaseio.com',
+    projectId: 'uneri',
+    storageBucket: 'uneri.appspot.com',
     messagingSenderId: '460599917014',
 };
-firebase.initializeApp(config);
+initializeApp(config);
 
-Vue.use(Quasar, {
-  components: All,  // 使いたいコンポーネントのみ列挙でもよいはず
-  directives: All,  // こちらも上と同様
-});
+const templateNode = {
+  itm:{
+    msgId: '',
+    message: '',
+    auther: '',
+    icons: {},
+    mute: false,
+    date: { created: '', modified: ''},
+    rootGroup: '',
+    parentId: '',
+    parentIndex: 1,
+    haveChild: false,
+    replyItems: [],
+  }
+};
 
-// #app to index.html>div>id='app'
-new Vue({
-  el: '#app',
-  router,
-  render: h => h(RouterSwitcher),
-  store: stateStore,
-  computed: {
-    currentMessageId(): string {
-      return this.$store.getters.getSelectedId;
-    },
-  },
+
+const app = createApp(App).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(store);
+app.provide('templateNode', templateNode);
+app.use(Quasar, quasarUserOptions).use(store).mount('#app');
+/*
+router.isReady().then(() => {
+  app.mount('#app');
 });
+*/

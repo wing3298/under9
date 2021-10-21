@@ -1,197 +1,291 @@
 <template>
-  <div :id="this.id"
+  <div :id="id"
     tabindex="-1"
-    ref="messageView"
+    ref="{{ id }}"
     @click.stop="readMessage"
     @keyup.stop.prevent.shift.enter="addSameMessage"
-    @keyup.enter.stop.prevent="addChildMessage"
+    @keyup.enter.stop.prevent.exact="addChildMessage"
     @keyup.up.stop="prevMessage"
     @keyup.down.stop="nextMessage"
     @keyup.space.stop="nextMessage"
     @focus="focusIn"
     @blur="focusOut"
-    :class="[fixMessageClass, fixMessageFrameClass, unselectMessage]">
+    class="message message-frame"
+    :class="{ selected: isSelectedMessage }">
     <div class="indicator indicatorspace">&nbsp;</div>
     <div class="message-basebody">
       <div class="message-header">
         <img class="online" :src="unknown" alt="unknown" title="unknown" style="height:44px">
       </div>
       <div class="message-body">
-        <MessageHeaderView></MessageHeaderView>
+        <message-header-view></message-header-view>
         <div class="message-formatted" @click="setReplyPosition">
-          {{ formatMessage(messageItems[0].message) }}
-          <ReplyForm v-if="messageItems[0].haveChild"></ReplyForm>
+          <message-edit-row v-if="messages.message==''"></message-edit-row>
+          <message-row v-else v-for="msg in messages.message.split('<br>')" :key="msg.msgId" :post="msg"></message-row>
+          <!--<template v-if="messages.haveChild" >-->
+            <!--<reply-form :messages="messages.replyItems"></reply-form>-->
+          <!--</template>-->
         </div>
       </div>
     </div>
-    <div :class="[fixRepliesClass, isReplies]">
+    <div :class="[fixRepliesClass, {repliesHidden : !messages.haveChild}]">
       <!-- Child of same level -->
-      <MessageView v-if="replyItems.length > 0" v-for="item in replyItems" :key="item.id"
-        @replySiblingMessage="addSameReplyMessage"
-        @prevParentMessage="focusInPrevNode"
-        @nextParentMessage="focusInNextNode"
-        ></MessageView>
+      <template v-if="messages.haveChild">
+        <message-view v-for="message in messages.replyItems" :key="message.itm" :messages="message.itm"></message-view>
+      </template>
       <!-- Enter or Shift + Enter Messages　Child of same level -->
-      <MessageReplyFormView v-if="addReplyFrame" @commitMessage="commitReply" @hideReplyFrom="hideReplyFrom"></MessageReplyFormView>
+      <message-reply-form-view v-if="addReplyFrame" @commitMessage="commitReply" @hideReplyFrom="hideReplyFrom"></message-reply-form-view>
     </div>
     <div class="replyHandle" @click.stop="addReply"></div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Vuex, { CommitOptions } from 'vuex';
+import { defineComponent, computed, SetupContext, toRefs, watch, reactive, watchEffect, ref, InjectionKey, inject} from 'vue';
+import Vuex, { CommitOptions, useStore } from 'vuex';
 import MessageHeaderView from './MessageHeaderView.vue';
 import MessageReplyFormView from './MessageReplyFormView.vue';
+import MessageRow from './MessageRow.vue';
 import ReplyForm from './ReplyForm.vue';
-import EventBus from '../../libs/EventBus';
+import MessageSelector from '../../libs/MessageSelector';
+import MessageInitialyzer from '../../libs/MessageInitialyzer';
+import MessageEditRow from './MessageEditRow.vue';
 
-export default Vue.component('MessageView', {
+export default defineComponent({
+  name: 'MessageView',
   template: '#MessageView',
-  data() {
-    return {
-      id: Math.random().toString(36).slice(-8),
-      activeChildMessageId: '',
-      unknown: require('../../assets/messages/unknown.jpg'),
-      fixMessageClass: 'message',
-      fixMessageFrameClass: 'message-frame',
-      fixRepliesClass: 'replies',
-      addReplyFrame: false,
-      replyPosition: -1,
-      replyIndex: [] as object[],
-      replyItems: [] as object[],
-    };
+  props: {
+    messages: {
+      type: Object,
+      required: true,
+    }
   },
-  components: {
-    messageHeaderView: MessageHeaderView,
-    messageReplyFormView: MessageReplyFormView,
-    replyForm: ReplyForm,
-  },
-  created() {
-    // tslint:disable-next-line:max-line-length
-    // const initdata = { msgId: '', message: '', auther: '', icons: {}, mute: false, date: { created: '', modified: ''}, rootGroup: '', parentId: '', parentIndex: 1 };
-    // this.replyItems.push(initdata);
-  },
-  methods: {
-    // mouse click
-    readMessage(event) {
+  //get global scope variable
+  inject: ['templateNode'],
+  setup(props, SetupContext){
+//    const { messages } = toRefs(props);
+//    watch(messages, () => {
+      //
+//    });
+
+    const store = useStore();
+    const id: string = Math.random().toString(36).slice(-8);
+    let activeChildMessageId: string = '';
+    const unknown: any = require('./../../assets/messages/unknown.jpg');
+    const fixRepliesClass: string = 'replies';
+    let addReplyFrame = ref(false);
+    let replyPosition: number =  -1;
+    let replyIndex:　Array<number> = [];
+    let replyItems: Array<object> = [];
+    let currentMessageId: string = id;
+    let isSelectedMessage = ref(false);
+    let messageTemplate: JSON = inject('templateNode') as JSON;
+
+
+    //指定のオブジェクトが変更されるたびに実行
+    store.watch((state, getters) => getters.getSelectedId, (newValue, oldValue) => {
+      console.log('watch');
+    });
+
+    //指定したオブジェクトの変更が行われた後に実行
+    store.subscribe((mutation, state) => {
+      if (mutation.type === 'updateSelectId') {
+        console.log('subscribe');
+        isSelectedMessage.value = (computed(()=>{
+          //各自自分のIDと異なる場合はメッセージの選択フレームを消す、自分自身だけ色をつける
+          return store.getters.getSelectedId == currentMessageId
+        })).value;
+      }
+    });
+/*
+    //コンポーネント全体のReactiveな変更を監視
+    watchEffect(() => {
+      //isSelectedMessage.valueが変更されると呼び出される
+      isSelectedMessage.value = (computed(()=>{
+        //各自自分のIDと異なる場合はメッセージの選択フレームを消す、自分自身だけ色をつける
+        return store.getters.getSelectedId == currentMessageId
+      })).value;
+    });
+*/
+    /**
+     * NodeのクリックでIDをグローバルに保存
+     * フォーカス枠をつける、他の全てからフォーカスを消す、他のクライアントは関係しない
+     */
+    const readMessage = (event): void => {
       if (event) {
+        //メッセージIDをActiveに変更(他のメッセージコンポーネントに通知するため)
+        currentMessageId = event.currentTarget.id;
         // call to state -> other all unselect
-        this.$store.dispatch('saveTargetId', {id: event.currentTarget.id});
+        //Vuexのstoreに自分のメッセージIDを登録
+        store.dispatch('saveTargetId', event.currentTarget.id);
+
+        //Server:自分の既読をコミットする
+
       }
-    },
+    };
     // reply frame click(At this point is uncertain)
-    addReply(event) {
+    const addReply = (event): void => {
       if (event) {
-        this.addReplyFrame = true;
+        //Enterで子階層にNodeが追加されるためいなければプロパティ変更
+        //TODO: このプロパティは廃止する
+        props.messages.haveChild = true;
+        //テンプレートからメッセージのHTMLを取得
+        const childItems: Array<JSON> = props.messages.replyItems;
+        //保持しているデータにテンプレートを整えて追加する
+        childItems.push(MessageInitialyzer.init(messageTemplate));
+        //画面はリアクティブに追従
       }
-    },
+    };
     // Enter key event and ...
-    addChildMessage(event) {
+    const addChildMessage = (event): void => {
       // shiftキーも拾ってしまうのでこのメソッドでは排除(子から呼ばれたとき)
       if (!event.shiftKey) {
         // Enter key -> add reply frame(child)
-        this.addReply(event);
+        addReply(event);
       }
-    },
+    };
     // Shift + Enter key event
-    addSameMessage(event) {
+    const addSameMessage = (event): void => {
       if (event) {
         // call to parent method -> add same(sibling) child
-        this.$emit('replySiblingMessage', this.id);
+        //this.$emit('replySiblingMessage', this.id);
       }
-    },
+    };
     // 子コンポーネントから呼び出し
-    addSameReplyMessage(targetId) {
-      this.addReply({});
-    },
+    const addSameReplyMessage = (targetId): void => {
+      addReply({});
+    };
     // from child event 入力フォームを消す
-    hideReplyFrom(event, targetId) {
-      this.addReplyFrame = false;
+    //MessageReplyFormView.vueからemitで呼び出される
+    const hideReplyFrom = (event, targetId): void => {
+      console.log(targetId);
+      //入力フォームを消す
+      addReplyFrame.value = false;
+      //TODO: 入力されたフォームを実フォームと入れ替える
+      //入力確定まではキャンセルされる可能性があるのでデータは確定させない？
+      //データを強制的に追加することでリアクティブに画面を表示させる？
+      //文字なしなら入力できるようにする？
+
       // 自分にフォーカスする
-      (this.$refs.messageView as HTMLElement).focus();
-    },
+      //(this.$refs.messageView as HTMLElement).focus();
+    };
     // from child event 入力フォームからShift + Enterで確定
-    commitReply(event, targetId, inputText) {
+    const commitReply = (event, targetId: string, inputText): void => {
       // 入力フォームを消す
-      this.addReplyFrame = false;
+      addReplyFrame.value = false;
       // データを追加
-      this.replyItems.push({ targetId : inputText });
-    },
-    setReplyPosition(event) {
+      replyItems.push({ targetId : inputText });
+    };
+    const setReplyPosition = (event): void => {
       // const target: any[] = event.currentTarget.childNodes;
-      console.log(event.target);
+      //console.log(event.target);
       // console.log(target.indexOf(event.target));
-    },
-    focusIn(event) {
-      console.log('focusIn');
-      this.activeChildMessageId = event.currentTarget.id;
-    },
-    focusOut(event) {
-      this.activeChildMessageId = '';
-    },
-    prevMessage(event) {
-      console.log(event.currentTarget);
-      this.focusInPrevNode(event.currentTarget);
-    },
-    focusInPrevNode(targetNode) {
-      const targetEl = targetNode.previousElementSibling as HTMLScriptElement;
-      if (targetEl.id !== 'messageHead') {
-        return;
+    };
+    const focusIn = (event): void => {
+      //console.log('focusIn');
+      activeChildMessageId = event.currentTarget.id;
+    };
+    const focusOut = (event): void => {
+      activeChildMessageId = '';
+    };
+
+    const prevMessage = (event): void => {
+      focusInPrevNode(event.currentTarget);
+    };
+    //ClickされたNodeの兄弟の一つ前を選択させる
+    const focusInPrevNode = (targetNode): void => {
+      //イベント発生Nodeの兄弟の一つ前を取得
+      const targetEl: HTMLScriptElement = targetNode.previousElementSibling as HTMLScriptElement;
+      //more top node
+      if(targetEl != null && targetEl.id == 'messageHead'){
+        console.log('more top node');
+        return
       }
+      //兄弟がいる場合はそこに移動
       if (targetEl !== null) {
         targetEl.focus();
-        this.$store.dispatch('saveTargetId', {id: targetEl.id});
-      } else {
-        this.$emit('prevParentMessage', targetNode.parentNode.parentNode);
+        store.dispatch('saveTargetId', targetEl.id);
       }
-    },
-    nextMessage(event) {
-      console.log(event.currentTarget);
-      this.focusInNextNode(event.currentTarget);
-    },
-    focusInNextNode(targetNode) {
-      const targetEl = targetNode.nextElementSibling as HTMLScriptElement;
+      //child top node
+      else {
+        //ひとつ前の兄弟がいない場合は親に移動する
+        const targetParentNodeId = MessageSelector.prevId(targetNode);
+        MessageSelector.parentNode(targetNode).focus();
+        store.dispatch('saveTargetId', targetParentNodeId);
+      }
+    };
+
+    const nextMessage = (event): void => {
+      focusInNextNode(event.currentTarget);
+    };
+    const focusInNextNode = (targetNode): void => {
+      const targetEl: HTMLScriptElement = targetNode.nextElementSibling as HTMLScriptElement;
       if (targetEl !== null) {
         targetEl.focus();
-        this.$store.dispatch('saveTargetId', {id: targetEl.id});
-      } else {
+        console.log(targetEl.id);
+        //子がいれば子を優先する
+
+        store.dispatch('saveTargetId', targetEl.id);
+      }
+      else {
+        //対象がないので親に戻す
         console.log(targetNode.parentNode.parentNode);
-        this.$emit('nextParentMessage', targetNode.parentNode.parentNode);
+        //more bottom node
+        if(targetNode.parentNode.parentNode.id == 'container'){
+          return;
+        }
+        focusInNextNode(targetNode.parentNode.parentNode);
       }
-    },
-    formatMessage(source: string) {
+    };
+    const formatMessage = (source: string): string => {
       const lines = source.split('<br>');
       const formatText: string[] = [];
       lines.forEach(element => {
         formatText.push('<div class="msgrow">' + element + '</div>');
       });
       return formatText.join('');
-    },
+    };
+
+
+    const isReplies = {
+      repliesHidden: addReplyFrame &&　replyItems.length === 0
+    };
+    const hasReplyFrame = (): boolean => {
+      return addReplyFrame.value;
+    };
+
+    return{
+      id,
+      currentMessageId,
+      focusIn,
+      focusOut,
+      props,
+      unknown,
+      fixRepliesClass,
+      addReplyFrame,
+      isReplies,
+      isSelectedMessage,
+      readMessage,
+      prevMessage,
+      nextMessage,
+      focusInPrevNode,
+      focusInNextNode,
+      setReplyPosition,
+      addChildMessage,
+      addReply,
+      commitReply,
+      hideReplyFrom,
+      addSameMessage,
+    };
+
   },
-  computed: {
-    unselectMessage(): object {
-      return {
-        // 選択されたメッセージIDが自分以外の時は選択を消す
-        selected: (this.currentMessageId !== '' && this.currentMessageId === this.id),
-      };
-    },
-    isReplies(): object {
-      return {
-        repliesHidden: !this.addReplyFrame && this.replyItems.length === 0,
-      };
-    },
-    hasReplyFrame(): boolean {
-      return this.addReplyFrame;
-    },
-    currentMessageId(): string {
-      return this.$store.getters.getSelectedId;
-    },
+  components: {
+    MessageHeaderView: MessageHeaderView,
+    MessageReplyFormView: MessageReplyFormView,
+    MessageRow: MessageRow,
+    MessageEditRow: MessageEditRow,
+    //ReplyForm: ReplyForm,
   },
-  props: [
-      'messageId',
-      'messageItems',
-  ],
 });
 </script>
 
@@ -343,8 +437,8 @@ export default Vue.component('MessageView', {
   -ms-user-select: auto;
 }
 
-.thumbsImg {
-}
+//.thumbsImg {
+//}
 
 .iconCount {
   font-size: 7pt;
@@ -363,8 +457,8 @@ export default Vue.component('MessageView', {
 }
 
 
-.reply {
-}
+//.reply {
+//}
 
 .replyParentTopPosition {
   margin-left: 0px;

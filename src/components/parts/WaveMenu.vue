@@ -19,8 +19,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.component('WaveMenu', {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'WaveMenu',
   template: '#WaveMenu',
+  setup() {
+    return{};
+  }
 });
 </script>
+
+<style lang="scss">
+.wavetop {
+  text-align: right;
+}
+</style>

@@ -11,16 +11,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
-export default Vue.component('MessageHeaderView', {
+export default defineComponent({
+  name: 'MessageHeaderView',
   data() {
     return {
       id: 'hoge',
-      editd: require('../../assets/messages/edit-d.png'),
-      muted: require('../../assets/messages/muted.png'),
-      liked: require('../../assets/messages/like-d.png'),
-      replyd: require('../../assets/messages/reply-d.png'),
+      editd: require('./../../assets/messages/edit-d.png'),
+      muted: require('./../../assets/messages/muted.png'),
+      liked: require('./../../assets/messages/like-d.png'),
+      replyd: require('./../../assets/messages/reply-d.png'),
     };
   },
   methods: {
@@ -57,8 +58,6 @@ export default Vue.component('MessageHeaderView', {
   height: 26px;
 }
 
-.thumbsImg {
-}
 
 .iconCount {
   font-size: 7pt;
@@ -92,12 +91,12 @@ export default Vue.component('MessageHeaderView', {
 }
 
 .grayscale {
-  -webkit-filter: grayscale(1%); 
+  -webkit-filter: grayscale(1%);
   filter: brightness(200%);
 }
 
 .nodecoration {
-  text-decoration: none!important;  
+  text-decoration: none!important;
 }
 
 .time {

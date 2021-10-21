@@ -2,7 +2,7 @@
     <!-- main wrapping component -->
     <q-layout>
         <!-- optional -->
-        <q-layout-header reveal="reveal">
+        <q-header reveal>
             <!-- content; any -->
             <q-toolbar color="primary">
               <!--
@@ -16,7 +16,7 @@
               />
 
               <q-toolbar-title>
-                na-meeting
+                uneri
               </q-toolbar-title>
 
               <!--
@@ -26,27 +26,21 @@
               -->
               <q-btn flat round dense icon="settings" />
             </q-toolbar>
-        </q-layout-header>
+        </q-header>
 
         <!-- optional -->
-        <q-layout-drawer side="left" content-class="bg-grey-3" v-model="leftSide" :content-style="{width: '200px'}">
-            <!-- content; any -->
-            <q-scroll-area class="fit">
-              <q-item to="/test-layout/toolbar">Toolbar</q-item>
-              <q-item to="/test-layout/tabs">Tabs</q-item>
-              <q-item to="/test-layout/drawer">Drawer</q-item>
-            </q-scroll-area>
-            <WaveListView></WaveListView>
-        </q-layout-drawer>
+        <q-drawer side="left" content-class="bg-grey-3" v-model="leftSide" :content-style="{width: '200px'}">
+            <wave-list-view></wave-list-view>
+        </q-drawer>
 
         <!-- optional -->
-        <q-layout-drawer side="right">
+        <q-drawer side="right">
             <!-- content; any -->
-        </q-layout-drawer>
+        </q-drawer>
 
         <!-- REQUIRED -->
         <q-page-container>
-            <WaveMenu></WaveMenu>
+            <wave-menu></wave-menu>
             <!--
             Here it's where Vue Router injects children
             Page components.
@@ -54,7 +48,7 @@
             <router-view/> tag below can be replaced by an
             actual page content should you wish to do so.
             -->
-            <WaveView></WaveView>
+            <wave-view></wave-view>
             <!--
             First child of QPageContainer must be a QPage,
             so make sure that your layout route children components
@@ -62,43 +56,47 @@
             -->
 
             <div class="">
-              <WaveReplyFormView></WaveReplyFormView>
+              <wave-reply-form-view></wave-reply-form-view>
             </div>
         </q-page-container>
 
         <!-- optional -->
-        <q-layout-footer reveal="reveal">
+        <q-footer reveal>
             <!-- content; any -->
-            <WaveMenu></WaveMenu>
-        </q-layout-footer>
+            <wave-footer></wave-footer>
+        </q-footer>
     </q-layout>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import WaveListView from './components/parts/WaveListView.vue';
 import WaveMenu from './components/parts/WaveMenu.vue';
 import WaveView from './components/parts/WaveView.vue';
 import WaveFooter from './components/parts/WaveFooter.vue';
 import WaveReplyFormView from './components/parts/WaveReplyFormView.vue';
 
-export default {
+export default defineComponent({
   name: 'App',
   data() {
     return {
-      logoimg: './assets/logo.png',
+      logoimg: '../../../static/logo.png',
       leftSide: true,
       header: true,
       reveal: false,
     };
   },
   components: {
-    waveListView: WaveListView,
-    waveMenu: WaveMenu,
-    waveView: WaveView,
-    waveFooter: WaveFooter,
-    waveReplyFormView: WaveReplyFormView,
+    WaveListView: WaveListView,
+    WaveMenu: WaveMenu,
+    WaveView: WaveView,
+    WaveFooter: WaveFooter,
+    WaveReplyFormView: WaveReplyFormView,
   },
-};
+  setup() {
+    return{};
+  }
+});
 </script>
 
 <style lang="scss">

@@ -7,8 +7,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.component('WaveListView', {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'WaveListView',
   template: '#WaveListView',
+  setup() {
+    return {};
+  }
 });
 </script>
