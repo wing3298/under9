@@ -4,9 +4,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
-const {
-  VueLoaderPlugin
-} = require('vue-loader')
+const { VueLoaderPlugin } = require('vue-loader')
 
 const isProduction = process.env.NODE_ENV == "development";
 const webpack = require('webpack');
@@ -66,20 +64,21 @@ const config = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-        loader: "file-loader",
-        type: "asset",
-        options: {
-          limit: 10000,
-          name: '[name].[ext]?[hash]'
-        }
-      },
+        test: /\.(png|jpg|svg|woff|gif)$/i,
+        generator: {
+          filename: 'assets/[name].[ext][query]'
+        },
+        type: 'asset/resource'
+      }
 
       // Add your rules for custom modules here
       // Learn more about loaders from https://webpack.js.org/loaders/
     ]
   },
   resolve: {
+    alias: {
+      '~': path.resolve(__dirname, 'src')
+    },
     extensions: [".tsx", ".ts", ".js"]
   }
 };

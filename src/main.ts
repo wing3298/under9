@@ -41,9 +41,9 @@ const templateNode = {
 };
 
 
-const app = createApp(App).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(store);
+const app = createApp(App).use(Quasar, quasarUserOptions);
 app.provide('templateNode', templateNode);
-app.use(Quasar, quasarUserOptions).use(store).mount('#app');
+app.use(store).mount('#app');
 /*
 router.isReady().then(() => {
   app.mount('#app');

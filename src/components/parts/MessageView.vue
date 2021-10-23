@@ -71,7 +71,7 @@ export default defineComponent({
     const store = useStore();
     const id: string = Math.random().toString(36).slice(-8);
     let activeChildMessageId: string = '';
-    const unknown: any = require('./../../assets/messages/unknown.jpg');
+    const unknown: any = require('~/assets/unknown.jpg');
     const fixRepliesClass: string = 'replies';
     let addReplyFrame = ref(false);
     let replyPosition: number =  -1;

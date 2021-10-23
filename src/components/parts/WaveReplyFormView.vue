@@ -26,7 +26,7 @@ export default defineComponent({
   name: 'WaveReplyFormView',
   data() {
     return {
-      unknown: require('./../../assets/messages/unknown.jpg'),
+      unknown: require('~/assets/unknown.jpg'),
     };
   },
 });

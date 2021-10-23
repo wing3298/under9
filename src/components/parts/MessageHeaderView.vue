@@ -18,10 +18,10 @@ export default defineComponent({
   data() {
     return {
       id: 'hoge',
-      editd: require('./../../assets/messages/edit-d.png'),
-      muted: require('./../../assets/messages/muted.png'),
-      liked: require('./../../assets/messages/like-d.png'),
-      replyd: require('./../../assets/messages/reply-d.png'),
+      editd: require('~/assets/edit-d.png'),
+      muted: require('~/assets/muted.png'),
+      liked: require('~/assets/like-d.png'),
+      replyd: require('~/assets/reply-d.png'),
     };
   },
   methods: {

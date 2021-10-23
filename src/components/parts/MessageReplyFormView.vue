@@ -31,7 +31,7 @@ export default defineComponent({
     const id: string = Math.random().toString(36).slice(-8);
     const inputText = '';
     const processing = false;
-    const unknown: any = require('./../../assets/messages/unknown.jpg');
+    const unknown: any = require('~/assets/unknown.jpg');
 
 
     const replySelect = (event) => {
