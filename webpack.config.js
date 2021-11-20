@@ -4,15 +4,26 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
-const { VueLoaderPlugin } = require('vue-loader')
+const { VueLoaderPlugin } = require('vue-loader');
 
-const isProduction = process.env.NODE_ENV == "development";
+const isProduction = false;//process.env.NODE_ENV == "development";
 const webpack = require('webpack');
 
 const config = {
-  entry: "./src/main.ts",
+  entry: path.resolve(__dirname, "./src/main.ts"),
   output: {
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    clean: true,
+  },
+  mode: "development",
+  devtool: 'source-map',
+  devServer: {
+    static: [
+      {
+        directory: path.join(__dirname, 'assets'),
+      }
+    ],
+    open: true,
   },
   plugins: [
     new VueLoaderPlugin(),
@@ -24,7 +35,11 @@ const config = {
     new webpack.DefinePlugin({
       "__VUE_OPTIONS_API__": true,
       "__VUE_PROD_DEVTOOLS__": false,
-    })
+    }),
+    new webpack.HotModuleReplacementPlugin()
+    , new webpack.LoaderOptionsPlugin({
+       debug: true
+     })
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
   ],
@@ -77,7 +92,8 @@ const config = {
   },
   resolve: {
     alias: {
-      '~': path.resolve(__dirname, 'src')
+      '~': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './src')
     },
     extensions: [".tsx", ".ts", ".js"]
   }
@@ -90,7 +106,8 @@ module.exports = (env = {}) => {
     config.plugins.push(new MiniCssExtractPlugin());
 
     config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
-  } else {
+  }
+  else {
     config.mode = "development";
   }
   return config;

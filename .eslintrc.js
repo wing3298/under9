@@ -7,6 +7,7 @@ module.exports = {
   },
   env: {
     browser: true,
+    node: true,
     nanojs: true,
   },
   extends: [
@@ -14,7 +15,11 @@ module.exports = {
     // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
     'plugin:vue/vue3-essential',
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-    'standard'
+    'standard',
+    '@nuxtjs',
+    '@nuxtjs/eslint-config-typescript',
+    'plugin:prettier/recommended',
+    'plugin:nuxt/recommended'
   ],
   // required to lint *.vue files
   plugins: [

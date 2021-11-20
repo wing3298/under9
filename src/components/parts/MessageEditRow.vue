@@ -15,7 +15,7 @@ export default defineComponent({
   props: ['post'],
   setup(props, context) {
     const id: string = Math.random().toString(36).slice(-8);
-    const inputText = '';
+    const inputText: string = '';
     const processing = false;
     const unknown: any = require('~/assets/unknown.jpg');
 

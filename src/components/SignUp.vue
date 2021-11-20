@@ -12,27 +12,23 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+//import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default defineComponent({
   name: 'Signup',
-  data() {
-    return {
-      username: '',
-      password: '',
-    };
-  },
-  methods: {
-    signUp() {
-      const auth = getAuth();
+  setup() {
+    const signUp = () => {
+      //const auth = getAuth();
+      /*
       createUserWithEmailAndPassword(auth, this.username, this.password)
         .then(user => {
-          alert('Create account: ' + user);
+          //alert('Create account: ' + user);
         })
         .catch(error => {
-          alert(error.message);
+          //alert(error.message);
         });
-    },
+      */
+    }
   },
 });
 </script>

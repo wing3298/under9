@@ -13,7 +13,8 @@
 import { defineComponent, reactive, ref  } from 'vue';
 
 import MessageView from './MessageView.vue';
-import EventBus from '../../libs/EventBus';
+import { getRootMessage, getMessages } from "../../controller/messageLoader";
+
 
 export default defineComponent({
   name: 'WaveView',
@@ -22,8 +23,32 @@ export default defineComponent({
     MessageView: MessageView,
   },
   setup() {
+    //firebaseからデータ取得
+    //
+    //
+    let messageList: Array<Object> = reactive([]);
 
-      const testdata = [
+    //Functionsを呼び出す→Waveの全データを取得(直近のみ)
+    getRootMessage((result): void => {
+      //callback
+      //rootNodes:[{itm:{}},{itm:{}},{itm:{}}]
+      console.log(result.data());
+
+    });
+
+    getMessages((result): void => {
+      //
+      console.log(result.data());
+    }, {});
+
+      //データモデル
+      ///messages/{wave(anto}/nodes/{auto}->itmフィールド
+      //ドキュメントにあるフイールドwaveIdで対象のドキュメントを一つ選択
+      //nodesにあるフィールドrootId(timestamp)で直近の親スレッド10個を取得
+      //↑親をロードするところまでFunctionで動かして一括取得
+      //別Functionにて取得データをループして子階層を順に取得してドキュメント全体を作成
+      //クライアントに返すとこの形↓(サイズによりパフォーマンスがかなり落ちることに注意)
+      let testdata = [
         {
         itm:{
           msgId: 'msg001',

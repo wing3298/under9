@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, TwitterAuthProvider, signInWithPopup } from 'firebase/auth';
 
 export default defineComponent({
   name: 'Signin',
@@ -23,7 +23,7 @@ export default defineComponent({
     };
   },
   methods: {
-    signIn() {
+    signIn2email() {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, this.username, this.password)
       .then(user => {
@@ -34,6 +34,16 @@ export default defineComponent({
           alert(err.message);
         });
     },
+  },
+  setup(props, context) {
+    const signIn = async () => {
+      const provider = new TwitterAuthProvider();
+      const result = await signInWithPopup(getAuth(), provider);
+      const user = result.user;
+    };
+    return {
+      signIn
+    }
   },
 });
 </script>

@@ -80,7 +80,7 @@ export default defineComponent({
   name: 'App',
   data() {
     return {
-      logoimg: '../../../static/logo.png',
+      logoimg: require('@/assets/logo.svg'),
       leftSide: true,
       header: true,
       reveal: false,
